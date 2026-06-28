@@ -1,0 +1,48 @@
+@model IEnumerable<RestauranteCbba.Models.Producto>
+
+@{
+    ViewData["Title"] = "Lista de Productos";
+}
+
+<h1 class="titulo-azulgrana">🍽️ Lista de Productos</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-grana">➕ Agregar Nuevo Producto</a>
+</p>
+
+<table class="table table-azulgrana">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Nombre</td>
+                <td>@item.Categoria</td>
+                <td>Bs. @item.Precio</td>
+                <td>
+                    @if (item.Activo)
+                    {
+                        <span class="badge bg-success">✅ Activo</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">❌ Inactivo</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-azulgrana">✏️</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">📋</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">🗑️</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

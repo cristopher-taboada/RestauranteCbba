@@ -1,0 +1,85 @@
+@model RestauranteCbba.Models.Reserva
+
+@{
+    ViewData["Title"] = "Nueva Reserva";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card card-azulgrana">
+                <div class="card-header text-center">
+                    <h2 class="mb-0">📅 Nueva Reserva</h2>
+                    <p class="text-white-50" style="font-size: 0.9rem;">
+                        ¡Hola <strong style="color: #ffd700;">@User.Identity.Name</strong>! Completa los datos
+                    </p>
+                </div>
+                <div class="card-body">
+                    <!-- ===== MENSAJE DE ERROR ===== -->
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger text-center">
+                            <strong>⚠️ @ViewBag.Error</strong>
+                        </div>
+                    }
+
+                    <!-- ===== VALIDACIÓN GENERAL ===== -->
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <!-- 1. MESA -->
+                        <div class="form-group mb-3">
+                            <label asp-for="MesaId" class="control-label fw-bold text-dorado">🪑 Mesa</label>
+                            <select asp-for="MesaId" class="form-control form-control-azulgrana" asp-items="ViewBag.MesaId">
+                                <option value="">-- Seleccionar Mesa --</option>
+                            </select>
+                            <span asp-validation-for="MesaId" class="text-danger"></span>
+                        </div>
+
+                        <!-- 2. FECHA -->
+                        <div class="form-group mb-3">
+                            <label asp-for="FechaReserva" class="control-label fw-bold text-dorado">📆 Fecha</label>
+                            <input asp-for="FechaReserva" class="form-control form-control-azulgrana" type="date" />
+                            <span asp-validation-for="FechaReserva" class="text-danger"></span>
+                        </div>
+
+                        <!-- 3. HORA -->
+                        <div class="form-group mb-3">
+                            <label asp-for="HoraReserva" class="control-label fw-bold text-dorado">🕐 Hora</label>
+                            <input asp-for="HoraReserva" class="form-control form-control-azulgrana" type="time" />
+                            <span asp-validation-for="HoraReserva" class="text-danger"></span>
+                        </div>
+
+                        <!-- 4. PERSONAS -->
+                        <div class="form-group mb-3">
+                            <label asp-for="NumeroPersonas" class="control-label fw-bold text-dorado">👥 Personas</label>
+                            <input asp-for="NumeroPersonas" class="form-control form-control-azulgrana" type="number" min="1" max="20" value="1" />
+                            <span asp-validation-for="NumeroPersonas" class="text-danger"></span>
+                        </div>
+
+                        <!-- 5. OBSERVACIONES (opcional) -->
+                        <div class="form-group mb-3">
+                            <label asp-for="Observacion" class="control-label fw-bold text-dorado">📝 Observaciones</label>
+                            <textarea asp-for="Observacion" class="form-control form-control-azulgrana" rows="2" placeholder="Ej: Mesa cerca de la ventana"></textarea>
+                            <span asp-validation-for="Observacion" class="text-danger"></span>
+                        </div>
+
+                        <!-- BOTONES -->
+                        <div class="form-group text-center mt-4">
+                            <button type="submit" class="btn btn-grana btn-lg px-5">✅ Reservar</button>
+                            <a asp-action="Index" class="btn btn-azulgrana btn-lg px-4">🔙 Mis Reservas</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

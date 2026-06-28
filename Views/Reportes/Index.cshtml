@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Reportes";
+}
+
+<div class="container">
+    <h1 class="titulo-azulgrana text-center" style="display: block; text-align: center; margin-bottom: 40px;">
+        📊 <span class="dorado" style="color: #ffd700;">Reportes</span> del Restaurante
+    </h1>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card card-azulgrana text-center" style="padding: 20px;">
+                <h3 style="font-size: 3rem;">🪑</h3>
+                <h4>Mesas</h4>
+                <p style="font-size: 2.5rem; font-weight: bold; color: #ffd700;">@ViewBag.TotalMesas</p>
+                <p>Mesas disponibles en el restaurante</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-azulgrana text-center" style="padding: 20px;">
+                <h3 style="font-size: 3rem;">🍽️</h3>
+                <h4>Productos</h4>
+                <p style="font-size: 2.5rem; font-weight: bold; color: #ffd700;">@ViewBag.TotalProductos</p>
+                <p>Platos en nuestro menú</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-azulgrana text-center" style="padding: 20px;">
+                <h3 style="font-size: 3rem;">📅</h3>
+                <h4>Reservas</h4>
+                <p style="font-size: 2.5rem; font-weight: bold; color: #ffd700;">@ViewBag.TotalReservas</p>
+                <p>Reservas registradas</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 text-center">
+        <p style="color: #aaccdd;">Más reportes y gráficos disponibles próximamente...</p>
+    </div>
+</div>

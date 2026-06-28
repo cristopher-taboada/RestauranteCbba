@@ -1,0 +1,75 @@
+@model IEnumerable<RestauranteCbba.Models.Reserva>
+
+@{
+    ViewData["Title"] = "Mis Reservas";
+}
+
+<div class="container">
+    <h1 class="titulo-azulgrana">📅 Mis Reservas</h1>
+
+    <p>
+        <a asp-action="Create" class="btn btn-grana">➕ Nueva Reserva</a>
+    </p>
+
+    @if (!Model.Any())
+    {
+        <div class="card card-azulgrana text-center" style="padding: 50px;">
+            <h3>🍽️ No tienes reservas aún</h3>
+            <p class="text-white-50">Haz clic en "Nueva Reserva" para agendar tu mesa</p>
+        </div>
+    }
+    else
+    {
+        <table class="table table-azulgrana">
+            <thead>
+                <tr>
+                    <th>Mesa</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Personas</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Mesa?.NumeroMesa</td>
+                        <td>@item.FechaReserva.ToShortDateString()</td>
+                        <td>@item.HoraReserva</td>
+                        <td>@item.NumeroPersonas</td>
+                        <td>
+                            @if (item.Estado == "Pendiente")
+                            {
+                                <span class="badge bg-warning">⏳ Pendiente</span>
+                            }
+                            else if (item.Estado == "Confirmada")
+                            {
+                                <span class="badge bg-success">✅ Confirmada</span>
+                            }
+                            else if (item.Estado == "Cancelada")
+                            {
+                                <span class="badge bg-danger">❌ Cancelada</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-info">✅ Atendida</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Estado == "Pendiente")
+                            {
+                                <a asp-action="Cancelar" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('¿Cancelar reserva?')">🗑️ Cancelar</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Sin acciones</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

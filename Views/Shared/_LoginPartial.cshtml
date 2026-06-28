@@ -1,0 +1,41 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white fw-bold" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" style="background: rgba(255,215,0,0.15); border-radius: 20px; padding: 8px 20px; border: 1px solid #ffd700;">
+                👤 @User.Identity?.Name
+            </a>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="nav-link btn btn-link text-white fw-bold" style="background: #a5002c; border-radius: 20px; padding: 8px 20px; border: 2px solid #ffd700; color: white !important; text-decoration: none;">
+                    🚪 Cerrar sesión
+                </button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link fw-bold" asp-area="Identity" asp-page="/Account/Register" style="background: linear-gradient(135deg, #a5002c, #c90034); color: #ffd700 !important; border-radius: 30px; padding: 12px 30px; margin: 0 8px; border: 2px solid #ffd700; font-size: 1rem; box-shadow: 0 0 20px rgba(255,215,0,0.2); transition: all 0.3s ease;">
+                📝 Registrarse
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link fw-bold" asp-area="Identity" asp-page="/Account/Login" style="background: linear-gradient(135deg, #003366, #002244); color: #ffd700 !important; border-radius: 30px; padding: 12px 30px; margin: 0 8px; border: 2px solid #ffd700; font-size: 1rem; box-shadow: 0 0 20px rgba(255,215,0,0.2); transition: all 0.3s ease;">
+                🔑 Iniciar sesión
+            </a>
+        </li>
+    }
+</ul>
+
+<style>
+    .navbar-nav .nav-link:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px rgba(255,215,0,0.3) !important;
+    }
+</style>

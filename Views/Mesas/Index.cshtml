@@ -1,0 +1,52 @@
+@model IEnumerable<RestauranteCbba.Models.Mesa>
+
+@{
+    ViewData["Title"] = "Lista de Mesas";
+}
+
+<h1 class="titulo-azulgrana">🪑 Lista de Mesas</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-grana">➕ Agregar Nueva Mesa</a>
+</p>
+
+<table class="table table-azulgrana">
+    <thead>
+        <tr>
+            <th>Número</th>
+            <th>Capacidad</th>
+            <th>Ubicación</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.NumeroMesa</td>
+                <td>@item.Capacidad</td>
+                <td>@item.Ubicacion</td>
+                <td>
+                    @if (item.Estado == "Disponible")
+                    {
+                        <span class="badge bg-success">✅ Disponible</span>
+                    }
+                    else if (item.Estado == "Reservada")
+                    {
+                        <span class="badge bg-warning">📅 Reservada</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">❌ Ocupada</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-azulgrana">✏️</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">📋</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">🗑️</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

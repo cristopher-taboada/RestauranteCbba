@@ -1,0 +1,67 @@
+﻿@{
+    ViewData["Title"] = "Inicio";
+}
+
+<!-- HERO SECTION -->
+<div class="hero-azulgrana">
+    <div class="container">
+        <h1>🍽️ Bienvenido a <span class="dorado">Cochabamba</span></h1>
+        <p class="lead">Sabores auténticos de Bolivia en el corazón de la ciudad</p>
+        <hr style="border-color: rgba(255,215,0,0.3); max-width: 300px; margin: 20px auto;">
+        <p style="font-size: 1.1rem; opacity: 0.9;">Descubre nuestros platos típicos: <span style="color: #ffd700;">Pique Macho</span>, <span style="color: #ffd700;">Silpancho</span>, <span style="color: #ffd700;">Saice</span>, y mucho más</p>
+        <a asp-controller="Reservas" asp-action="Create" class="btn btn-grana mt-3">📅 Reserva tu mesa</a>
+    </div>
+</div>
+
+<!-- PLATOS TÍPICOS -->
+<div class="container">
+    <h2 class="titulo-azulgrana text-center" style="display: block; text-align: center; margin-bottom: 40px;">
+        🍽️ Nuestros <span class="dorado">Platos Típicos</span>
+    </h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card card-azulgrana h-100">
+                <div class="card-header text-center">
+                    <h3 class="mb-0">🥩 Pique Macho</h3>
+                </div>
+                <div class="card-body text-center">
+                    <p>Carne, salchicha, papas fritas, huevo y ají</p>
+                    <p><span style="color: #ffd700; font-weight: bold;">★ El favorito de los cochabambinos</span></p>
+                </div>
+                <div class="card-footer text-center">
+                    <span class="badge-grana">⭐⭐⭐⭐⭐</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-azulgrana h-100">
+                <div class="card-header text-center">
+                    <h3 class="mb-0">🍛 Silpancho</h3>
+                </div>
+                <div class="card-body text-center">
+                    <p>Carne apanada, arroz, papas y huevo frito</p>
+                    <p><span style="color: #ffd700; font-weight: bold;">★ Patrimonio culinario de Bolivia</span></p>
+                </div>
+                <div class="card-footer text-center">
+                    <span class="badge-grana">⭐⭐⭐⭐⭐</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-azulgrana h-100">
+                <div class="card-header text-center">
+                    <h3 class="mb-0">🥘 Saice</h3>
+                </div>
+                <div class="card-body text-center">
+                    <p>Carne molida con verduras y papas</p>
+                    <p><span style="color: #ffd700; font-weight: bold;">★ Sabor tradicional cochabambino</span></p>
+                </div>
+                <div class="card-footer text-center">
+                    <span class="badge-grana">⭐⭐⭐⭐⭐</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
