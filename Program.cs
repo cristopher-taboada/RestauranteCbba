@@ -20,9 +20,17 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// ==== CONFIGURAR RUTAS DE AUTENTICACIÓN ====
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Auth/Login";
+    options.LogoutPath = "/Auth/Logout";
+    options.AccessDeniedPath = "/Auth/AccessDenied";
+});
+
 builder.Services.AddControllersWithViews();
 
-// ===== CONFIGURACIÓN DE SESSION PARA EL CARRITO =====
+// Configuración de Session para el carrito
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -48,7 +56,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ===== USAR SESSION =====
+// Usar Session
 app.UseSession();
 
 app.MapControllerRoute(
