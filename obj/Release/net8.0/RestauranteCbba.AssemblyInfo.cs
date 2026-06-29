@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap5")]
 [assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("aspnet-RestauranteCbba-f850f3b4-644c-4fd5-88d1-0c2935c82386")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("RestauranteCbba")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9033501df05a58242e051eaa0493eed85d1d5dd3")]
 [assembly: System.Reflection.AssemblyProductAttribute("RestauranteCbba")]

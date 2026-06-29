@@ -1,0 +1,61 @@
+﻿@model List<RestauranteCbba.Models.CarritoItem>
+
+@{
+    ViewData["Title"] = "Carrito de Compras";
+}
+
+<h1 class="titulo-azulgrana">🛒 Carrito de Compras</h1>
+
+@if (!Model.Any())
+{
+    <div class="card card-azulgrana text-center" style="padding: 50px;">
+        <h3>🍽️ Tu carrito está vacío</h3>
+        <p class="text-white-50">Agrega platos desde el menú principal</p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-grana">Volver al Menú</a>
+    </div>
+}
+else
+{
+    <table class="table table-azulgrana">
+        <thead>
+            <tr>
+                <th>Plato</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Nombre</td>
+                    <td>Bs. @item.Precio</td>
+                    <td>
+                        <a asp-action="Agregar" asp-route-id="@item.Id" class="btn btn-sm btn-grana">+</a>
+                        @item.Cantidad
+                        <a asp-action="Eliminar" asp-route-id="@item.Id" class="btn btn-sm btn-danger">-</a>
+                    </td>
+                    <td>Bs. @item.Subtotal</td>
+                    <td>
+                        <a asp-action="Eliminar" asp-route-id="@item.Id" class="btn btn-sm btn-danger">🗑️ Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="text-end fw-bold text-dorado">Total:</td>
+                <td class="fw-bold text-dorado">Bs. @Model.Sum(i => i.Subtotal).ToString("0.00")</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="text-center mt-4">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-azulgrana">➕ Seguir Comprando</a>
+        <a asp-action="Vaciar" class="btn btn-danger">🗑️ Vaciar Carrito</a>
+        <a asp-controller="Pedidos" asp-action="Confirmar" class="btn btn-grana">✅ Confirmar Pedido</a>
+    </div>
+}
