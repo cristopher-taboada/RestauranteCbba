@@ -1,25 +1,23 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RestauranteCbba.Data;
 using RestauranteCbba.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RestauranteCbba.Controllers
 {
     [Authorize]
     public class CarritoController : Controller
     {
-        private readonly List<Producto> _productos = new List<Producto>
+        private readonly ApplicationDbContext _context;
+
+        public CarritoController(ApplicationDbContext context)
         {
-            new Producto { Id = 1, Nombre = "Pique Macho", Precio = 45.00m, Categoria = "Plato Fuerte" },
-            new Producto { Id = 2, Nombre = "Silpancho", Precio = 40.00m, Categoria = "Plato Fuerte" },
-            new Producto { Id = 3, Nombre = "Saice", Precio = 38.00m, Categoria = "Plato Fuerte" },
-            new Producto { Id = 4, Nombre = "Sopa de Maní", Precio = 25.00m, Categoria = "Entrada" },
-            new Producto { Id = 5, Nombre = "Chicharrón", Precio = 50.00m, Categoria = "Plato Fuerte" },
-            new Producto { Id = 6, Nombre = "Jugo Natural", Precio = 12.00m, Categoria = "Bebida" },
-            new Producto { Id = 7, Nombre = "Api con Pastel", Precio = 15.00m, Categoria = "Postre" },
-            new Producto { Id = 8, Nombre = "Salteña", Precio = 18.00m, Categoria = "Entrada" }
-        };
+            _context = context;
+        }
 
         public IActionResult Index()
         {
@@ -29,37 +27,60 @@ namespace RestauranteCbba.Controllers
 
         public IActionResult Agregar(int id)
         {
-            var producto = _productos.FirstOrDefault(p => p.Id == id);
-            if (producto != null)
+            var producto = _context.Productos.FirstOrDefault(p => p.Id == id && p.Activo == true);
+            if (producto == null)
             {
-                var carrito = GetCarrito();
-                var item = carrito.FirstOrDefault(c => c.Id == id);
-                if (item != null)
-                {
-                    item.Cantidad++;
-                }
-                else
-                {
-                    carrito.Add(new CarritoItem
-                    {
-                        Id = producto.Id,
-                        Nombre = producto.Nombre,
-                        Precio = producto.Precio,
-                        Cantidad = 1
-                    });
-                }
-                GuardarCarrito(carrito);
+                TempData["Error"] = "❌ Producto no encontrado.";
+                return RedirectToAction("Index", "Home");
             }
+
+            if (producto.Stock <= 0)
+            {
+                TempData["Error"] = $"❌ {producto.Nombre} está agotado.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var carrito = GetCarrito();
+            var item = carrito.FirstOrDefault(c => c.Id == id);
+            if (item != null)
+            {
+                if (item.Cantidad + 1 > producto.Stock)
+                {
+                    TempData["Error"] = $"❌ Solo hay {producto.Stock} unidades de {producto.Nombre}.";
+                    return RedirectToAction("Index", "Home");
+                }
+                item.Cantidad++;
+            }
+            else
+            {
+                carrito.Add(new CarritoItem
+                {
+                    Id = producto.Id,
+                    Nombre = producto.Nombre,
+                    Precio = producto.Precio,
+                    Cantidad = 1
+                });
+            }
+
+            GuardarCarrito(carrito);
+            TempData["Success"] = $"✅ {producto.Nombre} agregado al carrito!";
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult Eliminar(int id)
+        public IActionResult EliminarDelCarrito(int id)
         {
             var carrito = GetCarrito();
             var item = carrito.FirstOrDefault(c => c.Id == id);
             if (item != null)
             {
-                carrito.Remove(item);
+                if (item.Cantidad > 1)
+                {
+                    item.Cantidad--;
+                }
+                else
+                {
+                    carrito.Remove(item);
+                }
                 GuardarCarrito(carrito);
             }
             return RedirectToAction("Index");
@@ -71,9 +92,47 @@ namespace RestauranteCbba.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> Confirmar()
+        {
+            var carrito = GetCarrito();
+            if (!carrito.Any())
+            {
+                TempData["Error"] = "❌ Tu carrito está vacío.";
+                return RedirectToAction("Index");
+            }
+
+            // Verificar stock de todos los productos antes de confirmar
+            foreach (var item in carrito)
+            {
+                var producto = await _context.Productos.FindAsync(item.Id);
+                if (producto == null || producto.Stock < item.Cantidad)
+                {
+                    TempData["Error"] = $"❌ No hay suficiente stock de {item.Nombre}. Disponible: {producto?.Stock ?? 0}";
+                    return RedirectToAction("Index");
+                }
+            }
+
+            // Reducir stock
+            foreach (var item in carrito)
+            {
+                var producto = await _context.Productos.FindAsync(item.Id);
+                if (producto != null)
+                {
+                    producto.Stock -= item.Cantidad;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Vaciar carrito después de confirmar
+            GuardarCarrito(new List<CarritoItem>());
+
+            TempData["Success"] = "🎉 ¡Pedido confirmado con éxito! Gracias por tu compra.";
+            return RedirectToAction("Index", "Home");
+        }
+
         private List<CarritoItem> GetCarrito()
         {
-            // Si no hay carrito en la sesión, devolver una lista vacía
             var carrito = HttpContext.Session.GetObject<List<CarritoItem>>("Carrito");
             return carrito ?? new List<CarritoItem>();
         }

@@ -6,6 +6,15 @@
 
 <h1 class="titulo-azulgrana">🛒 Carrito de Compras</h1>
 
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success text-center">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger text-center">@TempData["Error"]</div>
+}
+
 @if (!Model.Any())
 {
     <div class="card card-azulgrana text-center" style="padding: 50px;">
@@ -35,11 +44,11 @@ else
                     <td>
                         <a asp-action="Agregar" asp-route-id="@item.Id" class="btn btn-sm btn-grana">+</a>
                         @item.Cantidad
-                        <a asp-action="Eliminar" asp-route-id="@item.Id" class="btn btn-sm btn-danger">-</a>
+                        <a asp-action="EliminarDelCarrito" asp-route-id="@item.Id" class="btn btn-sm btn-danger">-</a>
                     </td>
                     <td>Bs. @item.Subtotal</td>
                     <td>
-                        <a asp-action="Eliminar" asp-route-id="@item.Id" class="btn btn-sm btn-danger">🗑️ Eliminar</a>
+                        <a asp-action="EliminarDelCarrito" asp-route-id="@item.Id" class="btn btn-sm btn-danger">🗑️ Eliminar</a>
                     </td>
                 </tr>
             }
@@ -56,6 +65,6 @@ else
     <div class="text-center mt-4">
         <a asp-controller="Home" asp-action="Index" class="btn btn-azulgrana">➕ Seguir Comprando</a>
         <a asp-action="Vaciar" class="btn btn-danger">🗑️ Vaciar Carrito</a>
-        <a asp-controller="Pedidos" asp-action="Confirmar" class="btn btn-grana">✅ Confirmar Pedido</a>
+        <a asp-action="Confirmar" class="btn btn-grana">✅ Confirmar Pedido</a>
     </div>
 }

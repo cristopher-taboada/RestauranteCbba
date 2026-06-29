@@ -60,7 +60,9 @@
                         <td>
                             @if (item.Estado == "Pendiente")
                             {
-                                <a asp-action="Cancelar" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('¿Cancelar reserva?')">🗑️ Cancelar</a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-azulgrana">✏️ Editar</a>
+                                <a asp-action="Cancelar" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de cancelar esta reserva?')">🗑️ Cancelar</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar esta reserva?')">❌ Eliminar</a>
                             }
                             else
                             {

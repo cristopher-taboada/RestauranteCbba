@@ -39,7 +39,8 @@ namespace RestauranteCbba.Controllers
                 ViewBag.Error = "⚠️ No tienes un perfil de cliente. Contacta al administrador.";
             }
 
-            // Solo mostrar mesas disponibles
+            ViewBag.ClienteId = clienteId;
+
             ViewData["MesaId"] = new SelectList(
                 _context.Mesas.Where(m => m.Estado == "Disponible"),
                 "Id", "NumeroMesa"
@@ -66,12 +67,10 @@ namespace RestauranteCbba.Controllers
 
             if (ModelState.IsValid)
             {
-                // ===== CONVERTIR FECHA RESERVA A UTC =====
-                reserva.FechaReserva = DateTime.SpecifyKind(reserva.FechaReserva, DateTimeKind.Utc);
-
                 reserva.ClienteId = clienteId;
                 reserva.Estado = "Pendiente";
                 reserva.FechaCreacion = DateTime.UtcNow;
+                reserva.FechaReserva = DateTime.SpecifyKind(reserva.FechaReserva, DateTimeKind.Utc);
 
                 var mesa = await _context.Mesas.FindAsync(reserva.MesaId);
                 if (mesa != null)
@@ -91,6 +90,86 @@ namespace RestauranteCbba.Controllers
             return View(reserva);
         }
 
+        // GET: Editar reserva
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var reserva = await _context.Reservas
+                .Include(r => r.Mesa)
+                .Include(r => r.Cliente)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (reserva == null)
+            {
+                return NotFound();
+            }
+
+            if (reserva.ClienteId != GetClienteId())
+            {
+                return Forbid();
+            }
+
+            ViewData["MesaId"] = new SelectList(
+                _context.Mesas.Where(m => m.Estado == "Disponible" || m.Id == reserva.MesaId),
+                "Id", "NumeroMesa", reserva.MesaId
+            );
+            return View(reserva);
+        }
+
+        // POST: Editar reserva
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,MesaId,FechaReserva,HoraReserva,NumeroPersonas,Observacion")] Reserva reserva)
+        {
+            if (id != reserva.Id)
+            {
+                return NotFound();
+            }
+
+            var reservaOriginal = await _context.Reservas.FindAsync(id);
+            if (reservaOriginal == null || reservaOriginal.ClienteId != GetClienteId())
+            {
+                return Forbid();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    reservaOriginal.MesaId = reserva.MesaId;
+                    reservaOriginal.FechaReserva = DateTime.SpecifyKind(reserva.FechaReserva, DateTimeKind.Utc);
+                    reservaOriginal.HoraReserva = reserva.HoraReserva;
+                    reservaOriginal.NumeroPersonas = reserva.NumeroPersonas;
+                    reservaOriginal.Observacion = reserva.Observacion;
+
+                    _context.Update(reservaOriginal);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ReservaExists(reserva.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewData["MesaId"] = new SelectList(
+                _context.Mesas.Where(m => m.Estado == "Disponible" || m.Id == reserva.MesaId),
+                "Id", "NumeroMesa", reserva.MesaId
+            );
+            return View(reserva);
+        }
+
         // GET: Cancelar reserva
         public async Task<IActionResult> Cancelar(int id)
         {
@@ -103,7 +182,7 @@ namespace RestauranteCbba.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Eliminar reserva
+        // GET: Eliminar reserva (con validación de seguridad)
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -119,6 +198,12 @@ namespace RestauranteCbba.Controllers
                 return NotFound();
             }
 
+            // Verificar que la reserva pertenece al cliente logueado
+            if (reserva.ClienteId != GetClienteId())
+            {
+                return Forbid();
+            }
+
             return View(reserva);
         }
 
@@ -130,14 +215,28 @@ namespace RestauranteCbba.Controllers
             var reserva = await _context.Reservas.FindAsync(id);
             if (reserva != null)
             {
-                _context.Reservas.Remove(reserva);
+                // Verificar que la reserva pertenece al cliente logueado
+                if (reserva.ClienteId == GetClienteId())
+                {
+                    var mesa = await _context.Mesas.FindAsync(reserva.MesaId);
+                    if (mesa != null)
+                    {
+                        mesa.Estado = "Disponible";
+                    }
+
+                    _context.Reservas.Remove(reserva);
+                    await _context.SaveChangesAsync();
+                }
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        // Obtener el ID del cliente logueado
+        private bool ReservaExists(int id)
+        {
+            return _context.Reservas.Any(e => e.Id == id);
+        }
+
         private int GetClienteId()
         {
             var email = User.Identity?.Name;

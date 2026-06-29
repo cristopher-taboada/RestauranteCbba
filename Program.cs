@@ -20,7 +20,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// ==== CONFIGURAR RUTAS DE AUTENTICACIÓN ====
+// ===== CONFIGURAR RUTAS DE AUTENTICACIÓN =====
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Auth/Login";
