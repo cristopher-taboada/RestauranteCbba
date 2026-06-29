@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card card-azulgrana">
+                <div class="card-header text-center">
+                    <h2 class="mb-0">🔐 Iniciar Sesión</h2>
+                    <p class="text-white-50" style="font-size: 0.9rem;">Bienvenido a Restaurante Cochabamba</p>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="Login">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group mb-3">
+                            <label class="control-label fw-bold text-dorado">📧 Correo Electrónico</label>
+                            <input name="email" class="form-control form-control-azulgrana" placeholder="ejemplo@correo.com" />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="control-label fw-bold text-dorado">🔑 Contraseña</label>
+                            <input name="password" type="password" class="form-control form-control-azulgrana" placeholder="Ingresa tu contraseña" />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <div class="checkbox">
+                                <label class="text-white">
+                                    <input name="rememberMe" type="checkbox" value="true" />
+                                    ¿Recordar cuenta?
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-grana btn-lg w-100">✅ Iniciar Sesión</button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <a asp-action="Register" class="text-dorado">📝 ¿No tienes cuenta? Regístrate aquí</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

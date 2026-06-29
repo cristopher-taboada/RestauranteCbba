@@ -73,7 +73,9 @@ namespace RestauranteCbba.Controllers
 
         private List<CarritoItem> GetCarrito()
         {
-            return HttpContext.Session.GetObject<List<CarritoItem>>("Carrito")! ?? new List<CarritoItem>();
+            // Si no hay carrito en la sesión, devolver una lista vacía
+            var carrito = HttpContext.Session.GetObject<List<CarritoItem>>("Carrito");
+            return carrito ?? new List<CarritoItem>();
         }
 
         private void GuardarCarrito(List<CarritoItem> carrito)
@@ -93,7 +95,9 @@ namespace RestauranteCbba.Controllers
         public static T? GetObject<T>(this ISession session, string key)
         {
             var json = session.GetString(key);
-            return json == null ? default : System.Text.Json.JsonSerializer.Deserialize<T>(json);
+            if (string.IsNullOrEmpty(json))
+                return default;
+            return System.Text.Json.JsonSerializer.Deserialize<T>(json);
         }
     }
 }

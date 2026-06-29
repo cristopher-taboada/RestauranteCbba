@@ -91,7 +91,7 @@ namespace RestauranteCbba.Controllers
         {
             if (Url.IsLocalUrl(returnUrl))
             {
-                return Redirect(returnUrl);
+                return Redirect(returnUrl!);
             }
             else
             {

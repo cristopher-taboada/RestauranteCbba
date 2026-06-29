@@ -12,17 +12,24 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
-
-    // ==== CONFIGURACIÓN DE CONTRASEÑA SIMPLE ====
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
-    options.Password.RequiredLength = 3; // Mínimo 3 caracteres
+    options.Password.RequiredLength = 3;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
+
+// ===== CONFIGURACIÓN DE SESSION PARA EL CARRITO =====
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
@@ -41,10 +48,9 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Proteger todas las páginas de Identity
-app.MapRazorPages().RequireAuthorization();
+// ===== USAR SESSION =====
+app.UseSession();
 
-// Mapear rutas de los controladores
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

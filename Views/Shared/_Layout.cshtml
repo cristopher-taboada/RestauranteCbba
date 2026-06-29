@@ -46,8 +46,34 @@
                             <li class="nav-item">
                                 <a class="nav-link text-white fw-bold" asp-area="" asp-controller="Reportes" asp-action="Index" style="padding: 10px 20px; border-radius: 5px; margin: 0 3px; transition: all 0.3s;">Reportes</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-bold" asp-area="" asp-controller="Carrito" asp-action="Index" style="padding: 10px 20px; border-radius: 5px; margin: 0 3px; transition: all 0.3s;">🛒 Carrito</a>
+                            </li>
                         </ul>
-                        <partial name="_LoginPartial" />
+                        <!-- ===== MENÚ DE AUTENTICACIÓN (SIN _LoginPartial) ===== -->
+                        <ul class="navbar-nav">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white fw-bold" asp-controller="Auth" asp-action="Logout" style="background: #a5002c; border-radius: 20px; padding: 8px 20px; border: 2px solid #ffd700;">
+                                        🚪 Cerrar Sesión
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white fw-bold" asp-controller="Auth" asp-action="Login" style="background: linear-gradient(135deg, #003366, #002244); border-radius: 20px; padding: 8px 20px; border: 2px solid #ffd700;">
+                                        🔐 Iniciar Sesión
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white fw-bold" asp-controller="Auth" asp-action="Register" style="background: linear-gradient(135deg, #a5002c, #c90034); border-radius: 20px; padding: 8px 20px; border: 2px solid #ffd700;">
+                                        📝 Registrarse
+                                    </a>
+                                </li>
+                            }
+                        </ul>
                     </div>
                 </div>
             </nav>

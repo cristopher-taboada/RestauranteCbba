@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Registrarse";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card card-azulgrana">
+                <div class="card-header text-center">
+                    <h2 class="mb-0">📝 Crear Cuenta</h2>
+                    <p class="text-white-50" style="font-size: 0.9rem;">¡Únete a Restaurante Cochabamba!</p>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="Register">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group mb-3">
+                            <label class="control-label fw-bold text-dorado">📧 Correo Electrónico</label>
+                            <input name="email" class="form-control form-control-azulgrana" placeholder="ejemplo@correo.com" />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="control-label fw-bold text-dorado">🔑 Contraseña</label>
+                            <input name="password" type="password" class="form-control form-control-azulgrana" placeholder="Mínimo 3 caracteres" />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="control-label fw-bold text-dorado">✅ Confirmar Contraseña</label>
+                            <input name="confirmPassword" type="password" class="form-control form-control-azulgrana" placeholder="Repite tu contraseña" />
+                        </div>
+
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-grana btn-lg w-100">✅ Registrarse</button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <a asp-action="Login" class="text-dorado">🔐 ¿Ya tienes cuenta? Inicia sesión aquí</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
