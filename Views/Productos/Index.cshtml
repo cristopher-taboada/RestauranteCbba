@@ -1,48 +1,67 @@
 @model IEnumerable<RestauranteCbba.Models.Producto>
 
 @{
-    ViewData["Title"] = "Lista de Productos";
+    ViewData["Title"] = "Inventario";
 }
 
-<h1 class="titulo-azulgrana">🍽️ Lista de Productos</h1>
+<h1 class="titulo-azulgrana">📦 Inventario de Productos</h1>
+<p class="text-white-50">Gestiona el stock, precios y categorías de tus productos</p>
 
-<p>
+<div class="text-end mb-3">
     <a asp-action="Create" class="btn btn-grana">➕ Agregar Nuevo Producto</a>
-</p>
+</div>
 
-<table class="table table-azulgrana">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Precio</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="card card-azulgrana text-center" style="padding: 50px;">
+        <h3>⚠️ No hay productos registrados</h3>
+        <p class="text-white-50">Haz clic en "Agregar Nuevo Producto" para comenzar</p>
+    </div>
+}
+else
+{
+    <div class="row g-4 mt-3">
         @foreach (var item in Model)
         {
-            <tr>
-                <td>@item.Nombre</td>
-                <td>@item.Categoria</td>
-                <td>Bs. @item.Precio</td>
-                <td>
-                    @if (item.Activo)
-                    {
-                        <span class="badge bg-success">✅ Activo</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-danger">❌ Inactivo</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-azulgrana">✏️</a>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">📋</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">🗑️</a>
-                </td>
-            </tr>
+            <div class="col-md-4">
+                <div class="card card-azulgrana h-100">
+                    <div class="card-header text-center">
+                        <h4 class="mb-0">@item.Nombre</h4>
+                    </div>
+                    <div class="card-body text-center">
+                        <p>@item.Descripcion</p>
+                        <p><span style="color: #ffd700;">@item.Categoria</span></p>
+                        <p style="font-size: 1.5rem; color: #ffd700;">Bs. @item.Precio</p>
+                        <p><span style="color: #aaccdd;">Stock: @item.Cantidad</span></p>
+                        <p>
+                            @if (item.Activo)
+                            {
+                                <span class="badge bg-success">✅ Activo</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">❌ Inactivo</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <div class="d-flex justify-content-center gap-2">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-azulgrana">🔍</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">✏️ Editar</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">🗑️ Eliminar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+}

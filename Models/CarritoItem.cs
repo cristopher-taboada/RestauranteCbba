@@ -6,6 +6,7 @@
         public string? Nombre { get; set; }
         public decimal Precio { get; set; }
         public int Cantidad { get; set; } = 1;
+        public int Stock { get; set; }  // Stock disponible
         public decimal Subtotal => Precio * Cantidad;
     }
 }

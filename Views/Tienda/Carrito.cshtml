@@ -1,0 +1,75 @@
+﻿@model List<RestauranteCbba.Models.CarritoItem>
+
+@{
+    ViewData["Title"] = "Mi Carrito";
+}
+
+<h1 class="titulo-azulgrana">🛒 Mi Carrito</h1>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="card card-azulgrana text-center" style="padding: 50px;">
+        <h3>🍽️ Tu carrito está vacío</h3>
+        <a asp-action="Index" class="btn btn-grana">🛍️ Seguir comprando</a>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-azulgrana">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Nombre</td>
+                        <td>
+                            <form asp-action="EliminarDelCarrito" method="post" style="display: inline;">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger">-</button>
+                            </form>
+                            @item.Cantidad
+                            <form asp-action="AgregarAlCarrito" method="post" style="display: inline;">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm btn-grana">+</button>
+                            </form>
+                        </td>
+                        <td>Bs. @item.Precio</td>
+                        <td>Bs. @item.Subtotal</td>
+                        <td>
+                            <form asp-action="EliminarDelCarrito" method="post">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger">🗑️ Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-end fw-bold text-dorado">Total:</td>
+                    <td class="fw-bold text-dorado">Bs. @Model.Sum(i => i.Subtotal)</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="text-center mt-4">
+        <a asp-action="Index" class="btn btn-azulgrana">← Seguir comprando</a>
+        <a asp-action="Checkout" class="btn btn-grana">Proceder al pago →</a>
+    </div>
+}

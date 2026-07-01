@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Reportes";
+    var topProductos = ViewBag.TopProductos as List<dynamic> ?? new List<dynamic>();
+    var ventasPorMes = ViewBag.VentasPorMes as List<dynamic> ?? new List<dynamic>();
+}
+
+<h1 class="titulo-azulgrana">📊 Panel de Reportes</h1>
+<p class="text-white-50">Resumen completo de tu inventario y ventas</p>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card card-azulgrana text-center">
+            <div class="card-body">
+                <h3>📦</h3>
+                <h4>Productos</h4>
+                <p style="font-size: 2rem; color: #ffd700;">@ViewBag.TotalProductos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-azulgrana text-center">
+            <div class="card-body">
+                <h3>📋</h3>
+                <h4>Pedidos</h4>
+                <p style="font-size: 2rem; color: #ffd700;">@ViewBag.TotalPedidos</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="text-dorado">🏆 Top 10 Productos Más Vendidos</h3>
+<div class="table-responsive">
+    <table class="table table-azulgrana">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Producto</th>
+                <th>Vendidos</th>
+                <th>Recaudado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (topProductos.Any())
+            {
+                int i = 1;
+                foreach (var item in topProductos)
+                {
+                    <tr>
+                        <td>@i</td>
+                        <td>@item.Nombre</td>
+                        <td>@item.Vendidos</td>
+                        <td>Bs. @item.Recaudado</td>
+                    </tr>
+                    i++;
+                }
+            }
+            else
+            {
+                <tr><td colspan="4" class="text-center">No hay ventas registradas</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-dorado mt-4">📅 Ventas por Mes</h3>
+<div class="table-responsive">
+    <table class="table table-azulgrana">
+        <thead>
+            <tr>
+                <th>Mes</th>
+                <th>Vendidos</th>
+                <th>Recaudado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ventasPorMes.Any())
+            {
+                foreach (var item in ventasPorMes)
+                {
+                    <tr>
+                        <td>@($"{item.Mes:D2}/{item.Year}")</td>
+                        <td>@item.Vendidos</td>
+                        <td>Bs. @item.Recaudado</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="3" class="text-center">No hay ventas registradas</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

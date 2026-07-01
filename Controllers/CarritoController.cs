@@ -31,23 +31,23 @@ namespace RestauranteCbba.Controllers
             if (producto == null)
             {
                 TempData["Error"] = "❌ Producto no encontrado.";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Productos");
             }
 
-            if (producto.Stock <= 0)
+            if (producto.Cantidad <= 0)
             {
                 TempData["Error"] = $"❌ {producto.Nombre} está agotado.";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Productos");
             }
 
             var carrito = GetCarrito();
             var item = carrito.FirstOrDefault(c => c.Id == id);
             if (item != null)
             {
-                if (item.Cantidad + 1 > producto.Stock)
+                if (item.Cantidad + 1 > producto.Cantidad)
                 {
-                    TempData["Error"] = $"❌ Solo hay {producto.Stock} unidades de {producto.Nombre}.";
-                    return RedirectToAction("Index", "Home");
+                    TempData["Error"] = $"❌ Solo hay {producto.Cantidad} unidades de {producto.Nombre}.";
+                    return RedirectToAction("Index", "Productos");
                 }
                 item.Cantidad++;
             }
@@ -58,13 +58,14 @@ namespace RestauranteCbba.Controllers
                     Id = producto.Id,
                     Nombre = producto.Nombre,
                     Precio = producto.Precio,
-                    Cantidad = 1
+                    Cantidad = 1,
+                    Stock = producto.Cantidad
                 });
             }
 
             GuardarCarrito(carrito);
             TempData["Success"] = $"✅ {producto.Nombre} agregado al carrito!";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Productos");
         }
 
         public IActionResult EliminarDelCarrito(int id)
@@ -92,7 +93,8 @@ namespace RestauranteCbba.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Confirmar()
+        [HttpPost]
+        public async Task<IActionResult> Confirmar(string metodoPago)
         {
             var carrito = GetCarrito();
             if (!carrito.Any())
@@ -101,33 +103,37 @@ namespace RestauranteCbba.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Verificar stock de todos los productos antes de confirmar
             foreach (var item in carrito)
             {
                 var producto = await _context.Productos.FindAsync(item.Id);
-                if (producto == null || producto.Stock < item.Cantidad)
+                if (producto == null || producto.Cantidad < item.Cantidad)
                 {
-                    TempData["Error"] = $"❌ No hay suficiente stock de {item.Nombre}. Disponible: {producto?.Stock ?? 0}";
+                    TempData["Error"] = $"❌ No hay suficiente stock de {item.Nombre}.";
                     return RedirectToAction("Index");
                 }
             }
 
-            // Reducir stock
             foreach (var item in carrito)
             {
                 var producto = await _context.Productos.FindAsync(item.Id);
                 if (producto != null)
                 {
-                    producto.Stock -= item.Cantidad;
+                    producto.Cantidad -= item.Cantidad;
                 }
             }
 
             await _context.SaveChangesAsync();
-
-            // Vaciar carrito después de confirmar
             GuardarCarrito(new List<CarritoItem>());
 
-            TempData["Success"] = "🎉 ¡Pedido confirmado con éxito! Gracias por tu compra.";
+            string mensajePago = metodoPago switch
+            {
+                "Efectivo" => "💵 Pagarás en efectivo al momento de recibir tu pedido.",
+                "Tarjeta" => "💳 El pago se procesará con tarjeta.",
+                "Transferencia" => "🏦 Realiza la transferencia al número de cuenta indicado.",
+                _ => "Gracias por tu compra."
+            };
+
+            TempData["Success"] = $"🎉 ¡Pedido confirmado! {mensajePago}";
             return RedirectToAction("Index", "Home");
         }
 
@@ -140,23 +146,6 @@ namespace RestauranteCbba.Controllers
         private void GuardarCarrito(List<CarritoItem> carrito)
         {
             HttpContext.Session.SetObject("Carrito", carrito);
-        }
-    }
-
-    public static class SessionExtensions
-    {
-        public static void SetObject(this ISession session, string key, object value)
-        {
-            var json = System.Text.Json.JsonSerializer.Serialize(value);
-            session.SetString(key, json);
-        }
-
-        public static T? GetObject<T>(this ISession session, string key)
-        {
-            var json = session.GetString(key);
-            if (string.IsNullOrEmpty(json))
-                return default;
-            return System.Text.Json.JsonSerializer.Deserialize<T>(json);
         }
     }
 }

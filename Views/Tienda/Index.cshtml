@@ -1,0 +1,48 @@
+﻿@model IEnumerable<RestauranteCbba.Models.Producto>
+
+@{
+    ViewData["Title"] = "Tienda";
+}
+
+<h1 class="titulo-azulgrana">🛍️ Nuestros Productos</h1>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="row g-4 mt-3">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4">
+            <div class="card card-azulgrana h-100">
+                <div class="card-header text-center">
+                    <h4 class="mb-0">@item.Nombre</h4>
+                </div>
+                <div class="card-body text-center">
+                    <p>@item.Descripcion</p>
+                    <p><span style="color: #ffd700;">@item.Categoria</span></p>
+                    <p style="font-size: 1.5rem; color: #ffd700;">Bs. @item.Precio</p>
+                    <p>Stock: @item.Cantidad</p>
+                </div>
+                <div class="card-footer text-center">
+                    @if (item.Cantidad > 0)
+                    {
+                        <form asp-action="AgregarAlCarrito" method="post">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-grana w-100">🛒 Agregar</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">❌ AGOTADO</span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

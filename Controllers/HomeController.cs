@@ -20,7 +20,7 @@ namespace RestauranteCbba.Controllers
         {
             var productos = await _context.Productos
                 .Where(p => p.Activo == true)
-                .Take(6)
+                .Take(3)  // Solo 3 platos de muestra
                 .ToListAsync();
             return View(productos);
         }

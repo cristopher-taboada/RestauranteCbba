@@ -8,12 +8,189 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/RestauranteCbba.styles.css" asp-append-version="true" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons para el micrófono -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+            /* Estilo del botón de voz en la barra */
+            .btn-voice-nav {
+                background: transparent;
+                border: 1px solid rgba(255, 215, 0, 0.2);
+                color: #ffd700;
+                border-radius: 20px;
+                padding: 6px 16px;
+                font-weight: 600;
+                font-size: 0.85rem;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                background: rgba(255, 215, 0, 0.05);
+            }
+
+                .btn-voice-nav:hover {
+                    border-color: #ffd700;
+                    background: rgba(255, 215, 0, 0.1);
+                    transform: scale(1.02);
+                }
+
+                .btn-voice-nav.listening {
+                    border-color: #ff4757;
+                    color: #ff4757;
+                    animation: pulse-voice 1s infinite;
+                }
+
+            @@keyframes pulse-voice {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.3);
+                }
+
+                50% {
+                    box-shadow: 0 0 0 8px rgba(255, 71, 87, 0);
+                }
+
+                100% {
+                    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
+                }
+            }
+
+            /* Modal de voz minimalista */
+            .voice-modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                backdrop-filter: blur(8px);
+                z-index: 9999;
+                align-items: center;
+                justify-content: center;
+            }
+
+                .voice-modal-overlay.active {
+                    display: flex;
+                }
+
+            .voice-modal-box {
+                background: #0a1a2e;
+                border: 1px solid #ffd700;
+                border-radius: 20px;
+                padding: 30px;
+                max-width: 500px;
+                width: 90%;
+                text-align: center;
+                box-shadow: 0 0 60px rgba(255,215,0,0.1);
+            }
+
+                .voice-modal-box h3 {
+                    color: #ffd700;
+                    margin-bottom: 10px;
+                }
+
+                .voice-modal-box .status {
+                    color: #aaccdd;
+                    font-size: 0.9rem;
+                    margin-bottom: 15px;
+                }
+
+                    .voice-modal-box .status.ok {
+                        color: #ffd700;
+                    }
+
+                    .voice-modal-box .status.error {
+                        color: #ff4757;
+                    }
+
+                .voice-modal-box textarea {
+                    width: 100%;
+                    min-height: 80px;
+                    background: rgba(255,255,255,0.03);
+                    border: 1px solid rgba(255,215,0,0.1);
+                    border-radius: 10px;
+                    color: white;
+                    padding: 10px;
+                    resize: vertical;
+                    font-size: 1rem;
+                }
+
+                .voice-modal-box .voice-buttons {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 8px;
+                    justify-content: center;
+                    margin: 15px 0;
+                }
+
+                    .voice-modal-box .voice-buttons button {
+                        border: none;
+                        border-radius: 50px;
+                        padding: 8px 18px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                    }
+
+                        .voice-modal-box .voice-buttons button:hover {
+                            transform: scale(1.04);
+                        }
+
+            .btn-start {
+                background: #a5002c;
+                color: white;
+            }
+
+                .btn-start.active {
+                    background: #ffd700;
+                    color: #002244;
+                }
+
+            .btn-stop {
+                background: rgba(255,255,255,0.05);
+                color: #ff4757;
+                border: 1px solid #ff4757;
+            }
+
+            .btn-clear {
+                background: rgba(255,255,255,0.03);
+                color: #aaccdd;
+            }
+
+            .btn-search {
+                background: #ffd700;
+                color: #002244;
+            }
+
+            .btn-close-modal {
+                background: transparent;
+                color: #aaccdd;
+                border: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .voice-modal-box .commands-help {
+                color: rgba(255,255,255,0.2);
+                font-size: 0.7rem;
+                margin-top: 10px;
+                border-top: 1px solid rgba(255,255,255,0.03);
+                padding-top: 10px;
+            }
+
+                .voice-modal-box .commands-help span {
+                    display: inline-block;
+                    background: rgba(255,255,255,0.03);
+                    padding: 2px 8px;
+                    border-radius: 12px;
+                    margin: 2px;
+                    color: #ffd700;
+                }
+    </style>
 </head>
 <body>
-    <!-- ===== FONDO AZULGRANA ===== -->
+    <!-- FONDO AZULGRANA -->
     <div style="background: linear-gradient(180deg, #002244 0%, #003366 30%, #1a3a5c 60%, #0a1a2e 100%); min-height: 100vh;">
 
-        <!-- Barra superior de club -->
+        <!-- Barra superior -->
         <div style="background: linear-gradient(90deg, #002244, #a5002c 50%, #002244); padding: 6px 0; text-align: center; color: #ffd700; font-size: 12px; letter-spacing: 4px; font-weight: 700; border-bottom: 2px solid #ffd700;">
             ⚽ ★ RESTAURANTE COCHABAMBA ★ SABORES DE BOLIVIA ★ ⚽
         </div>
@@ -31,26 +208,23 @@
                     </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item"><a class="nav-link text-white fw-bold" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fw-bold" asp-area="" asp-controller="Mesas" asp-action="Index">Mesas</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fw-bold" asp-area="" asp-controller="Productos" asp-action="Index">Menú</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fw-bold" asp-area="" asp-controller="Reservas" asp-action="Index">Reservas</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fw-bold" asp-area="" asp-controller="Reportes" asp-action="Index">Reportes</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fw-bold" asp-area="" asp-controller="Carrito" asp-action="Index">🛒 Carrito</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fw-bold" asp-area="" asp-controller="Tienda" asp-action="Index">🛍️ Tienda</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fw-bold" asp-area="" asp-controller="Tienda" asp-action="Carrito">🛒 Carrito</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fw-bold" asp-area="" asp-controller="Tienda" asp-action="Reportes">📊 Reportes</a></li>
+                            <!-- Botón de voz en la barra -->
                             <li class="nav-item">
-                                <a class="nav-link text-white fw-bold" asp-area="" asp-controller="Home" asp-action="Index" style="padding: 10px 20px; border-radius: 5px; margin: 0 3px; transition: all 0.3s;">Inicio</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white fw-bold" asp-area="" asp-controller="Mesas" asp-action="Index" style="padding: 10px 20px; border-radius: 5px; margin: 0 3px; transition: all 0.3s;">Mesas</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white fw-bold" asp-area="" asp-controller="Productos" asp-action="Index" style="padding: 10px 20px; border-radius: 5px; margin: 0 3px; transition: all 0.3s;">Menú</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white fw-bold" asp-area="" asp-controller="Reservas" asp-action="Index" style="padding: 10px 20px; border-radius: 5px; margin: 0 3px; transition: all 0.3s;">Reservas</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white fw-bold" asp-area="" asp-controller="Reportes" asp-action="Index" style="padding: 10px 20px; border-radius: 5px; margin: 0 3px; transition: all 0.3s;">Reportes</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white fw-bold" asp-area="" asp-controller="Carrito" asp-action="Index" style="padding: 10px 20px; border-radius: 5px; margin: 0 3px; transition: all 0.3s;">🛒 Carrito</a>
+                                <button id="voiceNavBtn" class="btn-voice-nav">
+                                    <i class="bi bi-mic"></i> Voz
+                                </button>
                             </li>
                         </ul>
-                        <!-- ===== MENÚ DE AUTENTICACIÓN (SIN _LoginPartial) ===== -->
+                        <!-- Menú de autenticación -->
                         <ul class="navbar-nav">
                             @if (User.Identity.IsAuthenticated)
                             {
@@ -104,9 +278,275 @@
         </footer>
     </div>
 
+    <!-- ===== MODAL DE VOZ (minimalista) ===== -->
+    <div id="voiceModal" class="voice-modal-overlay">
+        <div class="voice-modal-box">
+            <h3><i class="bi bi-mic"></i> Buscar por voz</h3>
+            <p class="status" id="voiceStatus">🗣️ Di "buscar [producto]" o "ir a [pestaña]"</p>
+            <textarea id="voiceText" placeholder="El texto reconocido aparecerá aquí..." readonly></textarea>
+            <div class="voice-buttons">
+                <button id="voiceStartBtn" class="btn-start">🎙️ Iniciar</button>
+                <button id="voiceStopBtn" class="btn-stop">⏹️ Detener</button>
+                <button id="voiceClearBtn" class="btn-clear">🧹 Limpiar</button>
+                <button id="voiceSearchBtn" class="btn-search">🔍 Buscar</button>
+                <button id="voiceCloseBtn" class="btn-close-modal">✖ Cerrar</button>
+            </div>
+            <div class="commands-help">
+                🗣️ <span>buscar pique</span> <span>ir a reservas</span> <span>ir a tienda</span> <span>ir a inicio</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts base -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- ===== SCRIPT DE VOZ Y NAVEGACIÓN ===== -->
+    <script>
+        (function() {
+        // Elementos del modal
+        const modal = document.getElementById('voiceModal');
+        const statusEl = document.getElementById('voiceStatus');
+        const textarea = document.getElementById('voiceText');
+        const startBtn = document.getElementById('voiceStartBtn');
+        const stopBtn = document.getElementById('voiceStopBtn');
+        const clearBtn = document.getElementById('voiceClearBtn');
+        const searchBtn = document.getElementById('voiceSearchBtn');
+        const closeBtn = document.getElementById('voiceCloseBtn');
+        const navBtn = document.getElementById('voiceNavBtn');
+
+        // Estado
+        let recognition = null;
+        let listening = false;
+        let finalText = '';
+
+        // Comandos de navegación (mapeo a rutas)
+        const commands = {
+        'inicio': '/Home/Index',
+        'home': '/Home/Index',
+        'mesas': '/Mesas/Index',
+        'menú': '/Productos/Index',
+        'reservas': '/Reservas/Index',
+        'reportes': '/Reportes/Index',
+        'carrito': '/Tienda/Carrito',
+        'tienda': '/Tienda/Index',
+        'catalogo': '/Tienda/Index'
+        };
+
+        // Función para abrir/cerrar modal
+        function openModal() {
+        modal.classList.add('active');
+        textarea.value = finalText;
+        textarea.scrollTop = textarea.scrollHeight;
+        statusEl.textContent = '🎤 Di un comando';
+        statusEl.className = 'status';
+        }
+        function closeModal() {
+        modal.classList.remove('active');
+        if (listening) stopListening();
+        }
+
+        // Iniciar / detener escucha
+        function startListening() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        statusEl.textContent = '❌ Tu navegador no soporta voz. Usa Chrome o Edge.';
+        statusEl.className = 'status error';
+        return;
+        }
+        if (listening) return;
+
+        if (!recognition) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = 'es-ES';
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        recognition.onstart = function() {
+        listening = true;
+        startBtn.textContent = '⏳ Escuchando...';
+        startBtn.classList.add('active');
+        statusEl.textContent = '🎤 Escuchando... habla claro.';
+        statusEl.className = 'status ok';
+        navBtn.classList.add('listening');
+        };
+
+        recognition.onresult = function(event) {
+        let interim = '';
+        let final = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+        final += transcript + ' ';
+        } else {
+        interim += transcript;
+        }
+        }
+        if (final.trim() !== '') {
+        finalText = final.trim();
+        textarea.value = finalText;
+        textarea.scrollTop = textarea.scrollHeight;
+        // Procesar comando automáticamente
+        processCommand(finalText);
+        } else {
+        // Mostrar lo que va escuchando
+        if (interim.trim() !== '') {
+        statusEl.textContent = '🎤 Escuchando: ' + interim;
+        }
+        }
+        };
+
+        recognition.onerror = function(event) {
+        console.warn('Voice error:', event.error);
+        if (event.error === 'not-allowed') {
+        statusEl.textContent = '❌ Permiso de micrófono denegado.';
+        statusEl.className = 'status error';
+        } else if (event.error === 'no-speech') {
+        statusEl.textContent = '⏳ No se detectó voz. Intenta de nuevo.';
+        statusEl.className = 'status';
+        } else {
+        statusEl.textContent = '⚠️ Error: ' + event.error;
+        statusEl.className = 'status error';
+        }
+        stopListening();
+        };
+
+        recognition.onend = function() {
+        if (listening) {
+        // Si sigue en escucha, reinicia (por si se detuvo)
+        try { recognition.start(); } catch(e) {}
+        } else {
+        stopListening();
+        }
+        };
+        }
+
+        try {
+        recognition.start();
+        } catch(e) {
+        // Si ya está corriendo, no pasa nada
+        }
+        }
+
+        function stopListening() {
+        listening = false;
+        if (recognition) {
+        try { recognition.stop(); } catch(e) {}
+        }
+        startBtn.textContent = '🎙️ Iniciar';
+        startBtn.classList.remove('active');
+        navBtn.classList.remove('listening');
+        statusEl.textContent = '🗣️ Micrófono detenido.';
+        statusEl.className = 'status';
+        }
+
+        // Procesar comando de voz
+        function processCommand(text) {
+        const lower = text.toLowerCase().trim();
+        // Buscar patrón "buscar X" o "ir a X"
+        let match = lower.match(/^(buscar|ir a|navegar a|ver)\s+(.+)/);
+        if (match) {
+        const action = match[1];
+        const target = match[2].trim();
+        // Verificar si es una pestaña (comando)
+        for (let key in commands) {
+        if (target.includes(key)) {
+        const url = commands[key];
+        window.location.href = url;
+        closeModal();
+        return;
+        }
+        }
+        // Si no es comando, buscar producto
+        if (action === 'buscar' || action === 'ver') {
+        window.location.href = '/Tienda/Index?searchString=' + encodeURIComponent(target);
+        closeModal();
+        return;
+        }
+        }
+        // Si solo dice una palabra que coincida con una pestaña
+        for (let key in commands) {
+        if (lower.includes(key)) {
+        window.location.href = commands[key];
+        closeModal();
+        return;
+        }
+        }
+        // Si dice "buscar" sin más, solo mostrar
+        if (lower.startsWith('buscar')) {
+        // Ya está en el textarea, usuario puede darle a buscar manualmente
+        statusEl.textContent = '🔍 ¿Buscar "' + text + '"? Presiona "Buscar"';
+        statusEl.className = 'status ok';
+        }
+        }
+
+        // Event listeners
+        navBtn.addEventListener('click', function() {
+        openModal();
+        // Iniciar automáticamente si no está escuchando
+        if (!listening) startListening();
+        });
+
+        startBtn.addEventListener('click', function() {
+        if (listening) {
+        stopListening();
+        } else {
+        startListening();
+        }
+        });
+
+        stopBtn.addEventListener('click', stopListening);
+
+        clearBtn.addEventListener('click', function() {
+        finalText = '';
+        textarea.value = '';
+        statusEl.textContent = '🧹 Texto limpiado.';
+        statusEl.className = 'status';
+        });
+
+        searchBtn.addEventListener('click', function() {
+        const txt = textarea.value.trim();
+        if (txt === '') {
+        statusEl.textContent = '⚠️ No hay texto para buscar.';
+        statusEl.className = 'status error';
+        return;
+        }
+        // Intentar procesar como comando primero
+        processCommand(txt);
+        // Si no redirigió, buscar en tienda
+        if (!window.location.pathname.includes('/Tienda/Index')) {
+        window.location.href = '/Tienda/Index?searchString=' + encodeURIComponent(txt);
+        }
+        closeModal();
+        });
+
+        closeBtn.addEventListener('click', closeModal);
+
+        // Cerrar con Escape
+        document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeModal();
+        });
+
+        // Cerrar click fuera
+        modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+        });
+
+        // También se puede usar Enter en el textarea para buscar
+        textarea.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        searchBtn.click();
+        }
+        });
+
+        // Inicializar estado
+        statusEl.textContent = '🗣️ Haz clic en el micrófono y habla.';
+        statusEl.className = 'status';
+        })();
+    </script>
+
 </body>
 </html>
